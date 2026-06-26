@@ -34,13 +34,6 @@ const hashedPassword = await bcrypt.hash(password, Number(config.bcrypt_salt_rou
         }
     });
 
-    // await prisma.profile.create({
-    //     data : {
-    //         userId : createdUser.id,
-    //         profilePhoto
-    //     }
-    // });
-
 const user = await prisma.user.findUnique({
     where:{
         id: createdUser.id,
@@ -56,6 +49,9 @@ const user = await prisma.user.findUnique({
 return user;
 }
 
+const getMyProfileIntoDB = async () =>{}
+
 export const userService = {
-    registerUserIntoDB
+    registerUserIntoDB,
+    getMyProfileIntoDB
 }

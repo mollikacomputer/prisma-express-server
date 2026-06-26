@@ -13,7 +13,7 @@ return async (req: Request, res: Response, next: NextFunction) =>{
             success :false,
             statusCode: httpStatus.INTERNAL_SERVER_ERROR,
             message: (error as Error).message,
-            error:(error as Error).message
+            error:(error as Error).stack
         })
     }
 }
