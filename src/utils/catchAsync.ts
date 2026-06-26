@@ -12,8 +12,8 @@ return async (req: Request, res: Response, next: NextFunction) =>{
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             success :false,
             statusCode: httpStatus.INTERNAL_SERVER_ERROR,
-            message: "Faild to register user",
-            error:(error as Error)
+            message: (error as Error).message,
+            error:(error as Error).message
         })
     }
 }
