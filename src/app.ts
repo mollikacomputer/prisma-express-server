@@ -7,6 +7,9 @@ import httpStatus from "http-status";
 import bcrypt from "bcrypt";
 import { userRouter } from "./modules/user/user.route";
 import { authRoutes } from "./modules/auth/auth.routes";
+import { postRoutes } from "./modules/post/post.routes";
+import { commentRoutes } from "./modules/comment/comment.routes";
+
 
 const app: Application = express();
 app.use(cors({
@@ -24,6 +27,10 @@ app.get("/", (req:Request, res:Response)=>{
 // app.post()
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRoutes);
+
+app.use('/api/posts', postRoutes);
+
+app.use('/api/comments', commentRoutes);
 
 
 export default app;
