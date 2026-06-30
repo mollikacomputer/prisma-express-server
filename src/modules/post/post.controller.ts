@@ -33,11 +33,28 @@ const getAllPost = catchAsync( async(req:Request, res:Response, next:NextFunctio
         }
         });
 
+});
+
+const getPostById = catchAsync(async(req:Request, res:Response, next: NextFunction)=>{
+    const postId = req.params.postId;
+    if(!postId){
+        throw new Error("Post Id required in params")
+    }
+    const result = await postService.getPostById(postId as string)
+
+    sendResponse(res, {
+        success:true,
+        statusCode:httpStatus.OK,
+        message:"Post retrived successfully.",
+        data:result,
+
+    })
 })
 
 
 
 export const postController ={
     createPost,
-    getAllPost
+    getAllPost,
+    getPostById
 }

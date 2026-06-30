@@ -7,7 +7,7 @@ const router = Router();
 
 router.post('/', auth(Role.ADMIN, Role.AUTHOR, Role.USER), postController.createPost);
 router.get('/allposts',auth(Role.ADMIN, Role.AUTHOR, Role.USER), postController.getAllPost);
-// router.get('/user-post:id', )
+router.get('/:postId', postController.getPostById)
 // router.patch('/user-post:id', )
 // router.delete('/user-post:id', )
 
