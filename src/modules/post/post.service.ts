@@ -1,3 +1,4 @@
+import { CommentStatus, PostStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { ICreatePostPayload, IUpdatePostPayload } from "./post.interface";
 
@@ -27,20 +28,27 @@ const getAllPostFromDb = async () =>{
     return result;
     }
 
-    const getPostById = async(postId: string)=>{
-        const post = await prisma.post.findUniqueOrThrow({
-            where:{
-                id:postId
-            }
-        })
-      const updatedPost = await prisma.post.update({
-        where:{
+const getPostById = async(postId: string)=>{
+
+    const transactionResult = await prisma.$transaction(
+        async (tx)=>{
+            await tx.post.update({
+                 where:{
             id:postId,
         },
         data:{
             views:{
                 increment:1
             }
+        }
+
+            });
+            
+            // throw new Error("Fake error");
+
+        const post = await tx.post.findUniqueOrThrow({
+                 where:{
+            id:postId
         },
         include:{
             author:{
@@ -48,11 +56,80 @@ const getAllPostFromDb = async () =>{
                     password:true
                 }
             },
-            comments:true
+            comments:{
+                where:{
+                    status: CommentStatus.APPROVED
+                },
+                orderBy:{
+                    createdAt:"desc"
+                }
+            },
+            _count:{
+                select:{
+                    comments:true
+                }
+            }
         }
-      })
+            });
+            return post;
 
-        return updatedPost
+        }
+    );
+    return transactionResult;
+    }
+
+    const getPostsStats = async() =>{
+        const transactionResult = await prisma.$transaction(
+            async (tx) =>{
+                const totalPosts = await tx.post.count();
+
+                const totalPublishedPosts = await tx.post.count({
+                    where:{
+                        status: PostStatus.PUBLISHED
+                    }
+                })
+                const totalDraftPosts = await tx.post.count({
+                    where:{
+                        status: PostStatus.DRAFT
+                    }
+                })
+                const totalArchivedPosts = await tx.post.count({
+                    where:{
+                        status: PostStatus.ARCHIVED
+                    }
+                })
+                const totalComments = await tx.comment.count();
+                
+                const totalApprovedComments = await tx.comment.count({
+                    where:{
+                        status:CommentStatus.APPROVED
+                    }
+                })
+                const totalRegectedComments = await tx.comment.count({
+                    where:{
+                        status:CommentStatus.REJECT
+                    }
+                });
+                const totalPostViewsAggregate = await tx.post.aggregate({
+                    _sum:{
+                        views:true
+                    }
+                });
+                const totalPostViews = totalPostViewsAggregate._sum.views;
+                return {
+                    totalPosts,
+                    totalPublishedPosts,
+                    totalDraftPosts,
+                    totalArchivedPosts,
+                    totalComments,
+                    totalApprovedComments,
+                    totalRegectedComments,
+                    totalPostViews
+                }
+            }
+
+        )
+        return transactionResult;
     }
 
     const getMyPosts = async (authorId : string) => {
@@ -128,9 +205,7 @@ const deletePost = async(postId:string, authorId:string, isAdmin:boolean) =>{
     })
     return result;
 }
-const getPostStatus = () =>{
 
-}
 
 export const postService = {
     createPostIntoDb,
@@ -138,6 +213,6 @@ export const postService = {
     getPostById,
     updatePost,
     deletePost,
-    getPostStatus,
     getMyPosts,
+    getPostsStats
 };

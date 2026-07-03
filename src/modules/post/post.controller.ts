@@ -52,6 +52,17 @@ const getPostById = catchAsync(async (req : Request, res : Response, next : Next
     })
 });
 
+const getPostStatus = catchAsync( async(req:Request, res:Response, next: NextFunction)=>{
+    const result = await postService.getPostsStats();
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Post status retrived successfully",
+        data: result
+    })
+})
+
 const getMyPosts = catchAsync( async (req: Request, res:Response, next: NextFunction)=>{
     const authorId = req.user?.id;
 
@@ -115,5 +126,6 @@ export const postController ={
     getPostById,
     getMyPosts,
     updatePost,
-    deletePost
+    deletePost,
+    getPostStatus
 }
