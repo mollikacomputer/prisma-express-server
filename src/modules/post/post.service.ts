@@ -14,17 +14,44 @@ const createPostIntoDb = async (payload: ICreatePostPayload, userId:string) => {
 };
 
 const getAllPostFromDb = async () =>{
-    const result = await prisma.post.findMany({
-        include:{
-            author:{
-                omit:{
-                    password:true
+    const result = await prisma.post.findMany(
+        {
+            // Filtering / exact match without AND operator
+            // //start for search
+            // where:{
+            //     title:"My third post",
+            //     content:"Content of this post goes here"
+            // },
+             // Filtering / exact match with AND operator
+            // where:{
+            //     AND:[
+            //         {
+            //         title:"My third post" 
+            //         },
+            //         {
+            //             content:"Content of this post goes here"
+            //         }
+            //     ]
+            // },
+             // Filtering / partial match
+             where:{
+                title:{
+                    contains:"RonAldO",
+                    mode:"insensitive"
                 }
+             },
+            //end for search
+            include:{
+                author:{
+                    omit:{
+                        password:true
+                    }
+                },
+                comments:true
             },
-            comments:true
-        },
         
-    });
+        }
+    );
     return result;
     }
 
