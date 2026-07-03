@@ -34,13 +34,74 @@ const getAllPostFromDb = async () =>{
             //     ]
             // },
              // Filtering / partial match
-             where:{
-                title:{
-                    contains:"RonAldO",
-                    mode:"insensitive"
-                }
-             },
+            //  where:{
+            //     title:{
+            //         contains:"RonAldO",
+            //         mode:"insensitive"
+            //     }
+            //  },
+            // searching /partial search with OR operator
+            // where:{
+            //     OR:[
+            //         {
+            //             title:{
+            //                 contains:"Ronaldo",
+            //                 mode:"insensitive"
+            //             },
+            //         },
+            //         {
+            //             content:{
+            //                 contains:"Ronaldo",
+            //                 mode:"insensitive"
+            //             }
+            //         }
+            //     ]
+            // },
+            // combining and search (OR Operator) and filtering (AND)
+            // where:{
+            //     // filter and  searching combine
+            //     AND:[
+            //         {
+            //             // searching
+            //             OR:[
+            //                 {
+            //                     title:{
+            //                         contains:"Ro",
+            //                         mode:"insensitive"
+            //                     }
+            //                 },
+            //                 {
+            //                     content:{
+            //                         contains:"Ro",
+            //                         mode:"insensitive"
+            //                     }
+            //                 }
+            //             ]
+            //         },
+
+            //         // filtering
+            //         {
+            //             title:"Ronaldo"
+            //         },
+            //         {
+            //             content:"Ronaldo"
+            //         }
+            //     ]
+            // },
             //end for search
+            //pagination
+            // take:3,
+            // skip:0,
+
+            // page = 3, limit / take = 10 => 
+            // skip:(page-1) * limit = (3-1) * 10 = 20
+
+            // sorting in ascending or descending order
+            orderBy:{
+                createdAt:"desc",
+                title:"asc",
+                content:"desc"
+            },
             include:{
                 author:{
                     omit:{
