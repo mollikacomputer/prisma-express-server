@@ -89,7 +89,25 @@ console.log(event.data.object,"outside of switch case")
     }
 }
 
+const getSubscriptionStatus = async(userId: string)=>{
+    const isSubscriptionExist = await prisma.subscription.findFirstOrThrow({
+        where:{
+            userId
+        }
+    });
+    const isActive = isSubscriptionExist.status === "ACTIVE" &&
+    isSubscriptionExist.currentPeriodEnd && 
+    new Date(isSubscriptionExist.currentPeriodEnd) > new Date();
+
+    return {
+        status: isSubscriptionExist.status,
+        isSubscribed: isActive,
+        currentPeriodEnd: isSubscriptionExist.currentPeriodEnd
+    }
+}
+
 export const subscriptionServices = {
     createCheckoutSession,
     handleWebhook,
+    getSubscriptionStatus,
 }
