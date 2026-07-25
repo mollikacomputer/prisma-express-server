@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import app from "./app";
 import { prisma } from "./lib/prisma";
 import config from "./config";
